@@ -60,7 +60,7 @@ require('lazy').setup({
     },
   },
 
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim', opts = {} },
 
   {
     'zbirenbaum/copilot.lua',
@@ -89,8 +89,7 @@ require('lazy').setup({
       -- },
       signcolumn = false,
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
-          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
         -- vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
@@ -196,7 +195,7 @@ require('lazy').setup({
           if node.type == 'directory' or node:has_children() then
             if not node:is_expanded() then -- if unexpanded, expand
               state.commands.toggle_node(state)
-            else                           -- if expanded and has children, seleect the next child
+            else -- if expanded and has children, seleect the next child
               require('neo-tree.ui.renderer').focus_node(state, node:get_child_ids()[1])
             end
           else -- if not a directory just open it
@@ -224,9 +223,9 @@ require('lazy').setup({
           for i, result in pairs(results) do
             if result.val and result.val ~= '' then
               vim.list_extend(messages, {
-                { ('%s.'):format(i),           'Identifier' },
+                { ('%s.'):format(i), 'Identifier' },
                 { (' %s: '):format(result.msg) },
-                { result.val,                  'String' },
+                { result.val, 'String' },
                 { '\n' },
               })
             end
@@ -258,6 +257,9 @@ require('lazy').setup({
         use_libuv_file_watcher = true,
         filtered_items = {
           visible = true,
+          show_hidden_count = false,
+          hide_dotfiles = false,
+          hide_gitignored = false,
         },
       },
       event_handlers = {
@@ -289,14 +291,11 @@ require('lazy').setup({
     'ThePrimeagen/harpoon',
   },
 
-  require 'kickstart.plugins.autoformat',
+  -- require 'kickstart.plugins.autoformat',
   -- For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
 }, {})
 
 -- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
-
 vim.o.hlsearch = false
 vim.o.incsearch = true
 
@@ -345,6 +344,12 @@ vim.keymap.set('n', '<C-h>', '<C-w>h', { silent = true })
 vim.keymap.set('n', '<C-j>', '<C-w>j', { silent = true })
 vim.keymap.set('n', '<C-k>', '<C-w>k', { silent = true })
 vim.keymap.set('n', '<C-l>', '<C-w>l', { silent = true })
+vim.keymap.set('n', '<C-s>', ':w<CR>', { silent = true })
+
+vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { silent = true })
+vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { silent = true })
+vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { silent = true })
+vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { silent = true })
 
 -- Remap for dealing with word wrap
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -376,7 +381,7 @@ require('telescope').setup {
 pcall(require('telescope').load_extension, 'fzf')
 --
 -- See `:help telescope.builtin`
--- vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
@@ -470,10 +475,10 @@ require('nvim-treesitter.configs').setup {
 }
 --
 -- -- Diagnostic keymaps
--- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
--- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
--- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>dm', vim.diagnostic.open_float, { desc = 'Open floating [D]iagnostic [M]essage' })
+vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 --
 -- [[ Configure LSP ]]
 local on_attach = function(_, bufnr)
@@ -490,8 +495,8 @@ local on_attach = function(_, bufnr)
   -- nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  -- nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  -- nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
   -- nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   -- nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   -- nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
@@ -514,6 +519,15 @@ local on_attach = function(_, bufnr)
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
+
+  -- Improve UI for LSP floating windows like K
+  local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+  function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+    opts = opts or {}
+    opts.border = opts.border or 'single'
+    opts.max_width = opts.max_width or 80
+    return orig_util_open_floating_preview(contents, syntax, opts, ...)
+  end
 end
 
 local servers = {
