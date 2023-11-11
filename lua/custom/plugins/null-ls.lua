@@ -1,9 +1,10 @@
+local lspconfig = require 'lspconfig'
 local null_ls = require 'null-ls'
 null_ls.setup()
 
 require('mason-null-ls').setup {
   automatic_installation = true,
-  ensure_installed = { 'stylua', 'eslint_d', 'prettierd' },
+  ensure_installed = { 'stylua', 'eslint_d', 'prettierd', 'gofmt', 'goimports' },
   handlers = {
     -- function() end, -- disables automatic setup of all null-ls sources
     stylua = function(source_name, methods)
@@ -15,6 +16,12 @@ require('mason-null-ls').setup {
     end,
     prettierd = function(source_name, methods)
       null_ls.register(null_ls.builtins.formatting.prettierd)
+    end,
+    gofmt = function(source_name, methods)
+      null_ls.register(null_ls.builtins.formatting.gofmt)
+    end,
+    goimports = function(source_name, methods)
+      null_ls.register(null_ls.builtins.formatting.goimports)
     end,
   },
 }

@@ -45,8 +45,75 @@ require('lazy').setup({
         tag = 'legacy',
         opts = {},
       },
-      -- Remove later
-      'folke/neodev.nvim',
+      {
+        'folke/neodev.nvim',
+
+        config = function()
+          require('neodev').setup()
+        end,
+      },
+
+      config = function()
+        -- Create an augroup that is used for managing our formatting autocmds.
+        --      We need one augroup per client to make sure that multiple clients
+        --      can attach to the same buffer without interfering with each other.
+        local _augroups = {}
+        local get_augroup = function(client)
+          if not _augroups[client.id] then
+            local group_name = 'kickstart-lsp-format-' .. client.name
+            local id = vim.api.nvim_create_augroup(group_name, { clear = true })
+            _augroups[client.id] = id
+          end
+
+          return _augroups[client.id]
+        end
+
+        -- require('lspconfig').tsserver.setup {
+        --   on_attach = function(client)
+        --     client.resolved_capabilities.document_formatting = false
+        --     client.resolved_capabilities.document_range_formatting = false
+        --   end,
+        -- }
+
+        -- Whenever an LSP attaches to a buffer, we will run this function.
+        --
+        -- See `:help LspAttach` for more information about this autocmd event.
+        vim.api.nvim_create_autocmd('LspAttach', {
+          group = vim.api.nvim_create_augroup('kickstart-lsp-attach-format', { clear = true }),
+          -- This is where we attach the autoformatting for reasonable clients
+          callback = function(args)
+            local client_id = args.data.client_id
+            local client = vim.lsp.get_client_by_id(client_id)
+            local bufnr = args.buf
+
+            -- Only attach to clients that support document formatting
+            if not client.server_capabilities.documentFormattingProvider then
+              return
+            end
+
+            -- Tsserver usually works poorly. Sorry you work with bad languages
+            -- You can remove this line if you know what you're doing :)
+            if client.name == 'tsserver' then
+              return
+            end
+
+            -- Create an autocmd that will run *before* we save the buffer.
+            --  Run the formatting command for the LSP that has just attached.
+            vim.api.nvim_create_autocmd('BufWritePre', {
+              group = get_augroup(client),
+              buffer = bufnr,
+              callback = function()
+                vim.lsp.buf.format {
+                  async = false,
+                  filter = function(c)
+                    return c.id == client.id and client.name ~= 'tsserver'
+                  end,
+                }
+              end,
+            })
+          end,
+        })
+      end,
     },
   },
 
@@ -135,7 +202,17 @@ require('lazy').setup({
     },
   },
 
-  { 'numToStr/Comment.nvim', opts = {} },
+  {
+    'numToStr/Comment.nvim',
+    dependencies = {
+      'JoosepAlviste/nvim-ts-context-commentstring',
+    },
+    config = function()
+      require('Comment').setup {
+        pre_hook = require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook(),
+      }
+    end,
+  },
 
   {
     'nvim-telescope/telescope.nvim',
@@ -331,7 +408,8 @@ vim.o.completeopt = 'menuone,noselect'
 vim.o.termguicolors = true
 
 vim.o.scrolloff = 8
-vim.o.tabstop = 4
+vim.o.tabstop = 2
+vim.o.shiftwidth = 4
 
 -- [[ Basic Keymaps ]]
 -- Keymaps for better default experience
@@ -344,7 +422,10 @@ vim.keymap.set('n', '<C-h>', '<C-w>h', { silent = true })
 vim.keymap.set('n', '<C-j>', '<C-w>j', { silent = true })
 vim.keymap.set('n', '<C-k>', '<C-w>k', { silent = true })
 vim.keymap.set('n', '<C-l>', '<C-w>l', { silent = true })
-vim.keymap.set('n', '<C-s>', ':w<CR>', { silent = true })
+vim.keymap.set('n', '<C-s>', function()
+  vim.lsp.buf.format()
+  vim.cmd 'w'
+end, { silent = true })
 
 vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { silent = true })
 vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { silent = true })
@@ -396,6 +477,7 @@ vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { des
 -- vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sl', require('telescope.builtin').resume, { desc = '[S]earch [L]ast' })
 -- vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
 -- [[ Configure Harpoon ]]
@@ -412,6 +494,9 @@ require('nvim-treesitter.configs').setup {
 
   autotag = {
     enable = true,
+    enable_rename = true,
+    enable_close = true,
+    enable_close_on_slash = false,
   },
 
   highlight = {
@@ -475,13 +560,13 @@ require('nvim-treesitter.configs').setup {
 }
 --
 -- -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>dm', vim.diagnostic.open_float, { desc = 'Open floating [D]iagnostic [M]essage' })
 vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 --
 -- [[ Configure LSP ]]
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
   -- some DRY stuff =)
   local nmap = function(keys, func, desc)
     if desc then
@@ -513,12 +598,12 @@ local on_attach = function(_, bufnr)
   -- end, '[W]orkspace [L]ist Folders')
 
   -- Create a command `:Format` local to the LSP buffer
-  nmap('<leader>f', function()
-    vim.lsp.buf.format()
-  end, '[F]ormat current buffer with LSP')
-  vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    vim.lsp.buf.format()
-  end, { desc = 'Format current buffer with LSP' })
+  -- nmap('<leader>f', function()
+  --   vim.lsp.buf.format()
+  -- end, '[F]ormat current buffer with LSP')
+  -- vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+  --   vim.lsp.buf.format()
+  -- end, { desc = 'Format current buffer with LSP' })
 
   -- Improve UI for LSP floating windows like K
   local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
@@ -528,6 +613,11 @@ local on_attach = function(_, bufnr)
     opts.max_width = opts.max_width or 80
     return orig_util_open_floating_preview(contents, syntax, opts, ...)
   end
+
+  -- if client.name == 'tsserver' then
+  --   client.resolved_capabilities.document_formatting = false
+  --   client.resolved_capabilities.document_range_formatting = false
+  -- end
 end
 
 local servers = {
@@ -542,8 +632,6 @@ local servers = {
   },
 }
 
--- Remove later
-require('neodev').setup()
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
