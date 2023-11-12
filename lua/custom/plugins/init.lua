@@ -1,3 +1,2 @@
-return {
-	require("null-ls")
-}
+return {}
+
