@@ -72,7 +72,7 @@ require 'vim-key'
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
-    ensure_installed = { 'go', 'lua', 'tsx', 'javascript', 'typescript', 'bash', 'dockerfile', 'json', 'sql', 'html', 'haskell' },
+    ensure_installed = { 'go', 'lua', 'tsx', 'typescript', 'bash', 'dockerfile', 'json', 'sql', 'html', 'haskell', 'yaml', 'prisma', 'make' },
 
     auto_install = true,
 
