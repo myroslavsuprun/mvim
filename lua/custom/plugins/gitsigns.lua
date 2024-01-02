@@ -18,30 +18,27 @@ return {
         vim.keymap.set(mode, l, r, opts)
       end
 
-      map('n', '<leader>hs', gs.stage_hunk)
-      map('n', '<leader>hr', gs.reset_hunk)
-      map('v', '<leader>hs', function()
+      map('n', '<leader>gs', gs.stage_hunk, { desc = '[G]it [S]tage hunk' })
+      map('n', '<leader>gr', gs.reset_hunk, { desc = '[G]it [R]eset hunk' })
+      map('v', '<leader>gs', function()
         gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-      end)
-      map('v', '<leader>hr', function()
+      end, { desc = '[G]it [S]tage hunk' })
+      map('v', '<leader>gr', function()
         gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-      end)
-      map('n', '<leader>hS', gs.stage_buffer)
-      map('n', '<leader>hu', gs.undo_stage_hunk)
-      map('n', '<leader>hR', gs.reset_buffer)
-      map('n', '<leader>hp', gs.preview_hunk)
-      map('n', '<leader>hb', function()
+      end, { desc = '[G]it [R]eset hunk' })
+      map('n', '<leader>gS', gs.stage_buffer, { desc = '[G]it [S]tage buffer' })
+      map('n', '<leader>gu', gs.undo_stage_hunk, { desc = '[G]it [U]ndo stage hunk' })
+      map('n', '<leader>gR', gs.reset_buffer, { desc = '[G]it [R]eset buffer' })
+      map('n', '<leader>gP', gs.preview_hunk, { desc = '[G]it [P]review hunk' })
+      map('n', '<leader>gb', function()
         gs.blame_line { full = true }
-      end)
-      map('n', '<leader>tb', gs.toggle_current_line_blame)
-      map('n', '<leader>hd', gs.diffthis)
-      map('n', '<leader>hD', function()
+      end, { desc = '[G]it [B]lame line' })
+      map('n', '<leader>gtb', gs.toggle_current_line_blame, { desc = '[G]it [T]oggle [B]lame line' })
+      map('n', '<leader>gd', gs.diffthis, { desc = '[G]it [D]iff this' })
+      map('n', '<leader>gD', function()
         gs.diffthis '~'
-      end)
-      map('n', '<leader>td', gs.toggle_deleted)
-
-      -- Text object
-      map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+      end, { desc = '[G]it [D]iff this' })
+      map('n', '<leader>gtd', gs.toggle_deleted, { desc = '[G]it [T]oggle [D]eleted' })
 
       vim.keymap.set({ 'n', 'v' }, '<leader>gn', function()
         -- Not sure what it is
