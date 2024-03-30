@@ -43,7 +43,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- [[ Configure NeoTree ]]
-vim.keymap.set('n', '<leader>e', ':Neotree toggle<cr>', { silent = true })
+vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { silent = true })
 
 -- LazyGit keymaps
 vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { silent = true, desc = 'Open [L]azy[G]it' })
@@ -69,22 +69,43 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sl', require('telescope.builtin').resume, { desc = '[S]earch [L]ast' })
 
--- [[ Configure Harpoon ]]
+local harpoon = require 'harpoon'
+
+-- local conf = require('telescope.config').values
+-- local function toggle_telescope(harpoon_files)
+--   local file_paths = {}
+--   for _, item in ipairs(harpoon_files.items) do
+--     table.insert(file_paths, item.value)
+--   end
+--
+--   require('telescope.pickers')
+--       .new({}, {
+--         prompt_title = 'Harpoon',
+--         finder = require('telescope.finders').new_table {
+--           results = file_paths,
+--         },
+--         previewer = conf.file_previewer {},
+--         sorter = conf.generic_sorter {},
+--       })
+--       :find()
+-- end
+
 vim.keymap.set('n', '<M-1>', function()
-  require('harpoon.ui').nav_file(1)
+  harpoon:list():select(1)
 end, { desc = 'Harpoon file 1' })
 vim.keymap.set('n', '<M-2>', function()
-  require('harpoon.ui').nav_file(2)
+  harpoon:list():select(2)
 end, { desc = 'Harpoon file 2' })
 vim.keymap.set('n', '<M-3>', function()
-  require('harpoon.ui').nav_file(3)
+  harpoon:list():select(3)
 end, { desc = 'Harpoon file 3' })
 vim.keymap.set('n', '<M-4>', function()
-  require('harpoon.ui').nav_file(4)
+  harpoon:list():select(4)
 end, { desc = 'Harpoon file 4' })
 vim.keymap.set('n', '<M-e>', function()
-  require('harpoon.ui').toggle_quick_menu()
+  -- toggle_telescope(harpoon:list())
+  harpoon.ui:toggle_quick_menu(harpoon:list())
 end, { desc = 'Harpoon toggle menu' })
 vim.keymap.set('n', '<M-a>', function()
-  require('harpoon.mark').add_file()
+  harpoon:list():append()
 end, { desc = 'Harpoon add file' })

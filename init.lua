@@ -40,15 +40,27 @@ require('lazy').setup({
     end,
   },
 
+  -- {
+  --   'neanias/everforest-nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require('everforest').setup {
+  --       background = 'medium',
+  --     }
+  --     vim.cmd [[colorscheme everforest]]
+  --   end,
+  -- },
+
   {
-    'neanias/everforest-nvim',
+    'navarasu/onedark.nvim',
     lazy = false,
     priority = 1000,
     config = function()
-      require('everforest').setup {
-        background = 'medium',
+      require('onedark').setup {
+        style = 'cool',
       }
-      vim.cmd [[colorscheme everforest]]
+      vim.cmd [[colorscheme onedark]]
     end,
   },
 
@@ -56,7 +68,22 @@ require('lazy').setup({
     'lukas-reineke/indent-blankline.nvim',
     -- See `:help ibl`
     main = 'ibl',
-    opts = {},
+    config = function()
+      local hl_list = {}
+      for i, color in pairs { '#a13232', '#767621', '#216631', '#325a5e', '#324b7b', '#562155' } do
+        local name = 'IndentBlanklineIndent' .. i
+        vim.api.nvim_set_hl(0, name, { fg = color })
+        table.insert(hl_list, name)
+      end
+
+      require('ibl').setup {
+        indent = { highlight = hl_list, char = '▏' },
+        whitespace = {
+          highlight = hl_list,
+          remove_blankline_trail = false,
+        },
+      }
+    end,
   },
 
   -- Importing plugins from ./lua/custom/plugins
@@ -72,7 +99,7 @@ require 'vim-key'
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
-    ensure_installed = { 'go', 'lua', 'tsx', 'typescript', 'bash', 'dockerfile', 'json', 'sql', 'html', 'haskell', 'yaml', 'prisma', 'make' },
+    ensure_installed = { 'go', 'lua', 'tsx', 'typescript', 'bash', 'dockerfile', 'json', 'sql', 'html', 'haskell', 'yaml', 'prisma', 'make', 'cpp' },
 
     auto_install = true,
 

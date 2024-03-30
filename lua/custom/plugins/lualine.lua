@@ -4,7 +4,8 @@ return {
   opts = {
     options = {
       icons_enabled = false,
-      theme = 'everforest',
+      -- theme = 'everforest',
+      theme = 'onedark',
       component_separators = '|',
       section_separators = '',
       fmt = string.lower,

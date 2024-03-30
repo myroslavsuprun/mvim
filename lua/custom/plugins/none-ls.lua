@@ -8,17 +8,18 @@ return {
         null_ls.builtins.formatting.stylua,
         null_ls.builtins.formatting.goimports,
         null_ls.builtins.formatting.gofmt,
-        null_ls.builtins.formatting.fourmolu,
         null_ls.builtins.formatting.prettierd,
-        null_ls.builtins.formatting.eslint_d,
+        require 'none-ls.formatting.eslint_d',
 
-        -- Diagnostic
-        null_ls.builtins.diagnostics.eslint_d,
-        null_ls.builtins.diagnostics.misspell,
+        -- Diagnostics
+        require 'none-ls.diagnostics.eslint_d',
 
         -- Code actions
-        null_ls.builtins.code_actions.eslint_d,
+        require 'none-ls.code_actions.eslint_d',
       },
     }
   end,
+  dependencies = {
+    'nvimtools/none-ls-extras.nvim',
+  },
 }
