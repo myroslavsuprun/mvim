@@ -4,6 +4,10 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- Toggle hightlighting
+vim.keymap.set('n', 'm', ':set hlsearch!<CR>', { silent = true })
+vim.keymap.set('v', 'm', ':set hlsearch!<CR>', { silent = true })
+
 -- Remove default copying to clipboard (only "y" and visual "x" is left)
 vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true })
 vim.keymap.set('n', 'd', '"_d', { noremap = true, silent = true })
@@ -43,7 +47,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- [[ Configure NeoTree ]]
-vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { silent = true })
+vim.keymap.set('n', '<leader>e', ':Neotree toggle right<CR>', { silent = true, desc = 'Files toggle sidebar' })
+vim.keymap.set('n', '<leader>f', ':Neotree toggle float reveal=true<CR>', { silent = true, desc = 'Files toggle float' })
 
 -- LazyGit keymaps
 vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { silent = true, desc = 'Open [L]azy[G]it' })

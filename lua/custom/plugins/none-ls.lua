@@ -7,8 +7,12 @@ return {
         -- Formatting
         null_ls.builtins.formatting.stylua,
         null_ls.builtins.formatting.goimports,
-        null_ls.builtins.formatting.gofmt,
+        -- Don't need to use gofmt because goimports is better
+        -- null_ls.builtins.formatting.gofmt,
+        null_ls.builtins.diagnostics.staticcheck,
         null_ls.builtins.formatting.prettierd,
+        null_ls.builtins.formatting.sqlfluff,
+        null_ls.builtins.diagnostics.sqlfluff,
         require 'none-ls.formatting.eslint_d',
 
         -- Diagnostics
