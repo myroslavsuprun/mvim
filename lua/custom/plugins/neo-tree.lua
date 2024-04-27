@@ -8,6 +8,7 @@ return {
   },
 
   opts = {
+    popup_border_style = 'rounded',
     auto_clean_after_session_restore = true,
     close_if_last_window = true,
     source_selector = {
@@ -85,7 +86,6 @@ return {
         ['[b'] = 'prev_source',
         [']b'] = 'next_source',
         o = 'open',
-        O = 'system_open',
         h = 'parent_or_close',
         l = 'child_or_open',
         Y = 'copy_selector',
