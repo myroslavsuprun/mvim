@@ -11,8 +11,7 @@ return {
         -- null_ls.builtins.formatting.gofmt,
         null_ls.builtins.diagnostics.staticcheck,
         null_ls.builtins.formatting.prettierd,
-        null_ls.builtins.formatting.sqlfluff,
-        null_ls.builtins.diagnostics.sqlfluff,
+        null_ls.builtins.formatting.sql_formatter,
         require 'none-ls.formatting.eslint_d',
 
         -- Diagnostics
