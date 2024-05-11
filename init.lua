@@ -95,6 +95,7 @@ require('lazy').setup({
 require 'vim-o'
 -- [[ Basic Keymaps ]]
 require 'vim-key'
+require 'neovide'
 
 -- [[ Configure Treesitter ]]
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
