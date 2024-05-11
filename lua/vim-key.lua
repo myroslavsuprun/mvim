@@ -46,10 +46,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- [[ Configure NeoTree ]]
-vim.keymap.set('n', '<leader>e', ':Neotree toggle right<CR>', { silent = true, desc = 'Files toggle sidebar' })
-vim.keymap.set('n', '<leader>f', ':Neotree toggle float reveal=true<CR>', { silent = true, desc = 'Files toggle float' })
-
 -- LazyGit keymaps
 vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { silent = true, desc = 'Open [L]azy[G]it' })
 
@@ -67,6 +63,14 @@ vim.keymap.set('n', '<leader>/', function()
     previewer = false,
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
+vim.keymap.set('n', '<leader>sr', function()
+  require('telescope').extensions.frecency.frecency {
+    workspace = 'CWD',
+  }
+end, { desc = '[S]earch [R]ecently opened files' })
+
+-- Oil nvim
+vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })

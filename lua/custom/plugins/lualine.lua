@@ -1,6 +1,5 @@
 return {
   'nvim-lualine/lualine.nvim',
-  -- See `:help lualine.txt`
   opts = {
     options = {
       icons_enabled = false,
@@ -17,6 +16,12 @@ return {
           return str:sub(1, 1)
         end,
       } },
+      lualine_c = {
+        {
+          'filename',
+          path = 1,
+        },
+      },
       lualine_x = { 'filetype' },
     },
   },

@@ -10,10 +10,10 @@ return {
         return vim.fn.executable 'make' == 1
       end,
     },
+    'nvim-telescope/telescope-frecency.nvim',
+    'nvim-tree/nvim-web-devicons',
   },
   config = function()
-    -- [[ Configure Telescope ]]
-    -- See `:help telescope` and `:help telescope.setup()`
     require('telescope').setup {
       defaults = {
         mappings = {
@@ -38,7 +38,7 @@ return {
       },
     }
 
-    -- Enable telescope fzf native, if installed
     pcall(require('telescope').load_extension, 'fzf')
+    require('telescope').load_extension 'frecency'
   end,
 }
